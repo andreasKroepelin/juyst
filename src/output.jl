@@ -75,10 +75,11 @@ function truncate_code(code, n)
     end
 end
 
+const eval_ext = "-jlyfish.json"
 
 function default_output_file(typst_file)
     @assert endswith(typst_file, ".typ") "given Typst file does not end with .typ"
     base, _suffix = splitext(typst_file)
-    base * "-jlyfish.json"
+    base * eval_ext
 end
 
