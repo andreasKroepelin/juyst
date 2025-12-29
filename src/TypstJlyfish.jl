@@ -26,16 +26,31 @@ include("query.jl")
 include("evaluation.jl")
 
 
+function _activate_jlproject(typst_file::AbstractString, jlproject::Union{AbstractString,Nothing})
+    if !isnothing(jlproject)
+        prj = if isempty(jlproject)
+            return mktempdir(prefix = "jlyfish-eval")
+        elseif !isabspath(jlproject)
+            return joinpath(dirname(typst_file), jlproject)
+        else
+            return jlproject
+        end
+        Pkg.activate(prj)
+    end
+end
+
+
 function watch(
     typst_file;
     typst_args = "",
     evaluation_file = default_output_file(typst_file),
     watch_path = typst_file,
+    jlproject::Union{AbstractString,Nothing} = "",
 )
     @assert isfile(typst_file) "`$typst_file` does not exist."
     @assert ispath(watch_path) "`$watch_path` does not exist."
 
-    Pkg.activate(mktempdir(prefix = "jlyfish-eval"))
+    _activate_jlproject(typst_file, jlproject)
 
     jlyfish_state = JlyfishState(;
         evaluation_file,
@@ -77,8 +92,9 @@ function compile(
     typst_query_args = "",
     typst_compile_args = "",
     evaluation_file = default_output_file(typst_file),
+    jlproject::Union{AbstractString,Nothing} = "",
 )
-    Pkg.activate(mktempdir(prefix = "jlyfish-eval"))
+    _activate_jlproject(typst_file, jlproject)
 
     jlyfish_state = JlyfishState(;
         evaluation_file,
