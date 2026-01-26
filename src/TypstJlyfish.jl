@@ -97,8 +97,9 @@ function compile(
         end
     end
 
+    typst_path = something(Sys.which("typst"), Typst_jll.typst())
     compile_cmd = ```
-        $(Typst_jll.typst())
+        $(typst_path)
         compile
         $(split(typst_compile_args))
         $(jlyfish_state.typst_file)
